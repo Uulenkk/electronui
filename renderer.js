@@ -11,11 +11,22 @@ function addMessage(text, who) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-async function fakeAIResponse(userText) {
-  // TODO: энд AI API (OpenAI, Ollama, өөр backend) холбож өгнө
-  return new Promise((resolve) => {
-    setTimeout(() => resolve("AI: " + userText), 500);
+async function callAI(userText) {
+  const apiKey = "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"; // өөрийн API key
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: userText }]
+    }),
   });
+  const data = await response.json();
+  // OpenAI-н хариуны текст
+  return data.choices[0].message.content;
 }
 
 sendBtn.addEventListener("click", async () => {
@@ -23,10 +34,13 @@ sendBtn.addEventListener("click", async () => {
   if (!text) return;
   addMessage(text, "user");
   input.value = "";
-  const reply = await fakeAIResponse(text);
-  addMessage(reply, "ai");
+
+  try {
+    const reply = await window.electronAPI.callAI(text);
+    addMessage(reply, "ai");
+  } catch (err) {
+    addMessage("Алдаа: " + err.message, "ai");
+  }
 });
 
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") sendBtn.click();
-});
+
