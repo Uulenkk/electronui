@@ -11,20 +11,22 @@ function addMessage(text, who) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-
+async function fakeAIResponse(userText) {
+  ө
+  return new Promise((resolve) => {
+    setTimeout(() => resolve("AI: " + userText), 500);
+  });
+}
 
 sendBtn.addEventListener("click", async () => {
   const text = input.value.trim();
   if (!text) return;
   addMessage(text, "user");
   input.value = "";
-
-  try {
-    const reply = await window.electronAPI.callAI(text);
-    addMessage(reply, "ai");
-  } catch (err) {
-    addMessage("Алдаа: " + err.message, "ai");
-  }
+  const reply = await fakeAIResponse(text);
+  addMessage(reply, "ai");
 });
 
-
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendBtn.click();
+});
