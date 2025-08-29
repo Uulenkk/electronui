@@ -107,10 +107,10 @@
     }
 
     async function callAI(userText) {
-      return new Promise(resolve => {
-        setTimeout(() => resolve(" " + userText), 500);
-      });
-    }
+  const reply = await window.electronAPI.callAI(userText);
+  return reply;
+}
+
 
     sendBtn.addEventListener("click", async () => {
       const text = input.value.trim();

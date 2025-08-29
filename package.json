@@ -12,5 +12,9 @@
   "description": "",
   "devDependencies": {
     "electron": "^37.4.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "node-fetch": "^2.7.0"
   }
 }

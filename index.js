@@ -1,26 +1,28 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const fetch = require('node-fetch');
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-    },
+      preload: `${__dirname}/preload.js`
+    }
   });
-
   win.loadFile('index.html');
 }
 
-app.whenReady().then(() => {
-  createWindow();
+app.whenReady().then(createWindow);
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+ipcMain.handle('call-ai', async (event, prompt) => {
+  try {
+    
+    const url = `http://192.168.1.148:8080/ask?prompt=${encodeURIComponent(prompt)}`;
+    const response = await fetch(url);
+    const data = await response.text(); 
+    return data;
+  } catch (err) {
+    console.error(err);
+    return "Сервертэй холболт амжилтгүй боллоо.";
+  }
 });

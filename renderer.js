@@ -1,21 +1,13 @@
-const messagesDiv = document.getElementById("messages");
-const input = document.getElementById("textInput");
 const sendBtn = document.getElementById("sendBtn");
+const input = document.getElementById("textInput");
+const messagesDiv = document.getElementById("messages");
 
 function addMessage(text, who) {
   const div = document.createElement("div");
   div.className = "msg " + who;
   div.textContent = text;
-  div.style.alignSelf = who === "user" ? "flex-end" : "flex-start";
   messagesDiv.appendChild(div);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-async function fakeAIResponse(userText) {
-  
-  return new Promise((resolve) => {
-    setTimeout(() => resolve("AI: " + userText), 500);
-  });
 }
 
 sendBtn.addEventListener("click", async () => {
@@ -23,10 +15,11 @@ sendBtn.addEventListener("click", async () => {
   if (!text) return;
   addMessage(text, "user");
   input.value = "";
-  const reply = await fakeAIResponse(text);
+
+  const reply = await window.api.callAI(text);
   addMessage(reply, "ai");
 });
 
-input.addEventListener("keypress", (e) => {
+input.addEventListener("keypress", e => {
   if (e.key === "Enter") sendBtn.click();
 });
