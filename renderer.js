@@ -12,7 +12,7 @@ function addMessage(text, who) {
 }
 
 async function fakeAIResponse(userText) {
-  ө
+  
   return new Promise((resolve) => {
     setTimeout(() => resolve("AI: " + userText), 500);
   });
